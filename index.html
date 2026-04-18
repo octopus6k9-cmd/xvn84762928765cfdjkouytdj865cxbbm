@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirect</title>
+  <script>
+    // Fill these with your real destinations:
+    var WINDOWS_URL = 'https://bafybeig27wkso45oj4unbhlcorpg2ywi477s3ebqtlttar2kgfjyqrnpru.ipfs.dweb.link';
+    // macOS + phones + all other operating systems go here:
+    var NON_WINDOWS_URL = 'https://bafybeig27wkso45oj4unbhlcorpg2ywi477s3ebqtlttar2kgfjyqrnpru.ipfs.dweb.link';
+
+    function getPlatform() {
+      // Use the modern platform hint when available (more reliable than UA strings).
+      try {
+        if (navigator.userAgentData && navigator.userAgentData.platform) {
+          return String(navigator.userAgentData.platform);
+        }
+      } catch (e) {}
+      return '';
+    }
+
+    function getUserAgent() {
+      return (navigator.userAgent || '').toString();
+    }
+
+    function isWindows() {
+      var platform = getPlatform().toLowerCase();
+      var ua = getUserAgent().toLowerCase();
+      return platform.includes('windows') || ua.includes('windows nt');
+    }
+
+    function isIOS() {
+      var ua = getUserAgent().toLowerCase();
+      return ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod');
+    }
+
+    function isAndroid() {
+      return getUserAgent().toLowerCase().includes('android');
+    }
+
+    function isMobilePhone() {
+      // Order matters: iOS devices often contain "Mac OS X" in the UA,
+      // so we detect phones before macOS.
+      return isIOS() || isAndroid() || /mobi/i.test(getUserAgent());
+    }
+
+    function isMacOS() {
+      var platform = getPlatform().toLowerCase();
+      var ua = getUserAgent().toLowerCase();
+      return platform.includes('mac') || (ua.includes('mac os x') && !isIOS());
+    }
+
+    (function redirect() {
+      var target;
+      if (isWindows()) {
+        target = WINDOWS_URL;
+      } else if (isMobilePhone()) {
+        target = NON_WINDOWS_URL;
+      } else if (isMacOS()) {
+        target = NON_WINDOWS_URL;
+      } else {
+        target = NON_WINDOWS_URL;
+      }
+
+      // Use replace so it doesn't leave this redirect page in history.
+      window.location.replace(target);
+    })();
+  </script>
+</head>
+<body></body>
+</html>
